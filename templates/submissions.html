@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Submissions</title>
+    <style>
+        .submission-box {
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .submission-title {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Submissions</h1>
+    <a href="{{ url_for('index') }}"><button>Create Form</button></a>
+    {% for submission in submissions %}
+        <div class="submission-box">
+            <div class="submission-title">{{ submission.title }}</div>
+            <p>By: {{ submission.username }}</p>
+            <p>{{ submission.content[:100] }}...</p>
+            <a href="{{ url_for('reply', submission_id=submission.id) }}"><button>Reply</button></a>
+            <h3>Replies:</h3>
+            {% for reply in submission.replies %}
+                <p>{{ reply.content }}</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</body>
+</html>
