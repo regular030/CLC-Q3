@@ -19,14 +19,9 @@
     <a href="{{ url_for('index') }}"><button>Create Form</button></a>
     {% for submission in submissions %}
         <div class="submission-box">
-            <div class="submission-title">{{ submission.title }}</div>
+            <a class="submission-title" href="{{ url_for('view_submission', submission_id=submission.id) }}">{{ submission.title }}</a>
             <p>By: {{ submission.username }}</p>
             <p>{{ submission.content[:100] }}...</p>
-            <a href="{{ url_for('reply', submission_id=submission.id) }}"><button>Reply</button></a>
-            <h3>Replies:</h3>
-            {% for reply in submission.replies %}
-                <p>{{ reply.content }}</p>
-            {% endfor %}
         </div>
     {% endfor %}
 </body>

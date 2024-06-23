@@ -38,6 +38,17 @@ def submissions():
     all_submissions = Submission.query.all()
     return render_template('submissions.html', submissions=all_submissions)
 
+@app.route('/submission/<int:submission_id>', methods=['GET', 'POST'])
+def view_submission(submission_id):
+    submission = Submission.query.get_or_404(submission_id)
+    if request.method == 'POST':
+        content = request.form['content']
+        new_reply = Reply(content=content, submission_id=submission_id)
+        db.session.add(new_reply)
+        db.session.commit()
+        return redirect(url_for('view_submission', submission_id=submission_id))
+    return render_template('view_submission.html', submission=submission)
+
 @app.route('/reply/<int:submission_id>', methods=['GET', 'POST'])
 def reply(submission_id):
     submission = Submission.query.get_or_404(submission_id)
@@ -46,7 +57,7 @@ def reply(submission_id):
         new_reply = Reply(content=content, submission_id=submission_id)
         db.session.add(new_reply)
         db.session.commit()
-        return redirect(url_for('submissions'))
+        return redirect(url_for('view_submission', submission_id=submission_id))
     return render_template('reply.html', submission=submission)
 
 if __name__ == '__main__':
