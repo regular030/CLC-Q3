@@ -4,23 +4,19 @@
     <meta charset="UTF-8">
     <title>Submissions</title>
     <style>
-        .submission-box {
+        .box {
             border: 1px solid #000;
             padding: 10px;
             margin: 10px 0;
         }
-        .submission-title {
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
+    <a href="{{ url_for('create') }}"><button>Create Submission</button></a>
     <h1>All Submissions</h1>
-    <a href="{{ url_for('index') }}"><button>Create Form</button></a>
     {% for submission in submissions %}
-        <div class="submission-box">
-            <a class="submission-title" href="{{ url_for('view_submission', submission_id=submission.id) }}">{{ submission.title }}</a>
-            <p>By: {{ submission.username }}</p>
+        <div class="box">
+            <a href="{{ url_for('view_submission', submission_id=submission.id) }}"><h2>{{ submission.title }}</h2></a>
             <p>{{ submission.content[:100] }}...</p>
         </div>
     {% endfor %}

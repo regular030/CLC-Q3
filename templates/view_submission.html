@@ -2,33 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ submission.title }}</title>
-    <style>
-        .box {
-            border: 1px solid #000;
-            padding: 10px;
-            margin: 10px 0;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Details</title>
 </head>
 <body>
-    <a href="{{ url_for('submissions') }}"><button>Back to Submissions</button></a>
-    <div class="box">
-        <h1>{{ submission.title }}</h1>
-        <p>By: {{ submission.username }}</p>
+    <div>
+        <h2>{{ submission.title }}</h2>
         <p>{{ submission.content }}</p>
+        <h3>Replies</h3>
+        {% for reply in submission.replies %}
+            <div>
+                <p><strong>{{ reply.username }}:</strong> {{ reply.content }}</p>
+            </div>
+        {% endfor %}
     </div>
-    <h2>Replies</h2>
-    {% for reply in submission.replies %}
-        <div class="box">
-            <p>{{ reply.content }}</p>
-        </div>
-    {% endfor %}
-    <h3>Leave a Reply</h3>
-    <form action="{{ url_for('view_submission', submission_id=submission.id) }}" method="post">
-        <label for="content">Reply:</label>
-        <textarea id="content" name="content" required></textarea><br><br>
+    <form method="POST">
+        <textarea name="content" rows="4" cols="50"></textarea><br>
         <input type="submit" value="Submit Reply">
     </form>
+    <br>
+    <a href="{{ url_for('submissions') }}">Back</a>
 </body>
 </html>
