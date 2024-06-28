@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Submissions</title>
-    <style>
-        .box {
-            border: 1px solid #000;
-            padding: 10px;
-            margin: 10px 0;
-        }
-    </style>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}All Submissions{% endblock %}
+
+{% block content %}
     <a href="{{ url_for('create') }}"><button>Create Submission</button></a>
     <h1>All Submissions</h1>
     {% for submission in submissions %}
@@ -20,5 +11,4 @@
             <p>{{ submission.content[:100] }}...</p>
         </div>
     {% endfor %}
-</body>
-</html>
+{% endblock %}

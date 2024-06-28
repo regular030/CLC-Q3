@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submission Details</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Submission Details{% endblock %}
+
+{% block content %}
     <div>
         <h2>{{ submission.title }}</h2>
         <p>{{ submission.content }}</p>
@@ -16,11 +13,10 @@
             </div>
         {% endfor %}
     </div>
-    <form method="POST">
+    <form action="{{ url_for('view_submission', submission_id=submission.id) }}" method="POST">
         <textarea name="content" rows="4" cols="50"></textarea><br>
         <input type="submit" value="Submit Reply">
     </form>
     <br>
-    <a href="{{ url_for('submissions') }}">Back</a>
-</body>
-</html>
+    <a href="{{ url_for('submissions') }}">Back to Submissions</a>
+{% endblock %}
