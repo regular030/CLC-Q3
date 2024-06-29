@@ -1,10 +1,7 @@
 <!-- templates/submissions.html -->
 {% extends 'base.html' %}
-
 {% block title %}All Submissions{% endblock %}
-
 {% block content %}
-    <a href="{{ url_for('create') }}"><button>Create Submission</button></a>
     <h1>All Submissions</h1>
     {% for submission in submissions %}
         <div class="box">

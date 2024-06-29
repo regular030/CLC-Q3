@@ -1,42 +1,172 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
-    <!-- Add your CSS links here -->
     <style>
-        /* Your sidebar styles */
+        body {
+            font-size: 18px;
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .dark-mode {
+            background-color: #000000;
+            color: #f0f0f0;
+        }
         .sidebar {
             position: fixed;
+            top: 0;
             left: 0;
             width: 200px;
-            height: 100%;
-            background-color: #f0f0f0;
+            height: 100vh;
             padding: 20px;
+            font-size: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #f0f0f0;
+        }
+
+        .dark-mode .sidebar {
+            background-color: #555555; /* Dark mode background */
+            color: #f0f0f0; /* Dark mode text color */
         }
         .sidebar ul {
-            list-style-type: none; /* Remove bullet points */
+            list-style-type: none;
             padding: 0;
         }
+        .sidebar li {
+            margin: 0px 0;
+        }
+        .sidebar a {
+            text-decoration: none;
+            color: inherit;
+            font-size: 20px;
+        }
+        .sidebar a:hover {
+            text-decoration: underline;
+            background-color: #999999;
+        }
+        .sidebar .subsection > a:hover {
+        text-decoration: none;
+        background-color: transparent;
+        }
+        .sidebar .subsection > a {
+            text-decoration: none;
+            cursor: default; 
+        }
+        .sidebar .subsection ul {
+            padding-left: 20px; /* Indent nested lists */
+        }
+        .sidebar .subsection ul li {
+            margin: 0px 0;
+            font-size: 8px;
+        }
         .content {
-            margin-left: 220px; /* Adjust based on your sidebar width */
+            margin-left: 220px; 
             padding: 20px;
         }
+        .box {
+            border-radius: 15px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+        .dark-mode .box {
+            background-color: #222; /* Dark mode background for boxes */
+            color: #f0f0f0; /* Dark mode text color */
+            border-color: #888; /* Dark mode border color */
+        }
+        #settingsModal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .dark-mode #settingsModal {
+            background-color: rgba(0,0,0,0.8); /* Dark mode background for modal */
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 3px solid #888;
+            width: 200px;
+        }
+        .dark-mode .modal-content {
+            background-color: #444; /* Dark mode background for modal content */
+            color: #f0f0f0; /* Dark mode text color */
+            border-color: #888; /* Dark mode border color */
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        function toggleDarkMode() {
+            var body = document.body;
+            body.classList.toggle("dark-mode");
+            
+            if (body.classList.contains("dark-mode")) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+        function showModal() {
+            var modal = document.getElementById("settingsModal");
+            modal.style.display = "block";
+        }
+
+        function closeModal() {
+            var modal = document.getElementById("settingsModal");
+            modal.style.display = "none";
+        }
+    </script>
 </head>
 <body>
     {% if not request.path.endswith('/login') %}
     <div class="sidebar">
         <ul>
-            <li><a href="#">Settings</a></li>
-            <li><a href="{{ url_for('submissions') }}">Home</a></li>
-            <li><a href="{{ url_for('create') }}">Make Form</a></li>
-            <li><a href="#">Forms You Own</a></li>
-            <li><a href="#">Forms You've Replied To</a></li>
+            <li><a href="{{ url_for('submissions') }}">All Submissions</a></li>
+            <li><a href="{{ url_for('create') }}">Create a New Form</a></li>
+            <li class="subsection">
+                <a href="#" class="subsection-header">Forms You Own</a>
+                <ul>
+                    {% for form in forms_you_own %}
+                        <li><a href="{{ url_for('view_submission', submission_id=form.id) }}">{{ form.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li class="subsection">
+                <a href="#" class="subsection-header">Replied to Forms</a>
+                <ul>
+                    {% for form in replied_to_forms %}
+                        <li><a href="{{ url_for('view_submission', submission_id=form.id) }}">{{ form.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li><a href="#" onclick="showModal()">Settings</a></li>
         </ul>
     </div>
     {% endif %}
+    <div id="settingsModal">
+        <div class="modal-content">
+            <span onclick="closeModal()" style="float:right">&times;</span>
+            <h2>Settings</h2>
+            <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        </div>
+    </div>
     <div class="content">
         {% block content %}{% endblock %}
     </div>

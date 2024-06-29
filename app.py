@@ -1,5 +1,4 @@
 # app.py
-from flask import Flask
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -41,6 +40,7 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
+            session['username'] = user.username
             return redirect(url_for('submissions'))
         else:
             return "Login Failed. Please check your username and password."
@@ -63,7 +63,10 @@ def submissions():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     all_submissions = Submission.query.all()
-    return render_template('submissions.html', submissions=all_submissions)
+    user_submissions = Submission.query.filter_by(username=session.get('username')).order_by(Submission.id.desc()).limit(5).all()
+    user_replies = Reply.query.filter_by(username=session.get('username')).order_by(Reply.id.desc()).limit(5).all()
+    replied_to_forms = [Submission.query.get(reply.submission_id) for reply in user_replies]
+    return render_template('submissions.html', submissions=all_submissions, forms_you_own=user_submissions, replied_to_forms=replied_to_forms)
 
 @app.route('/create', methods=['GET', 'POST'])
 def create():
@@ -91,6 +94,15 @@ def view_submission(submission_id):
         db.session.add(new_reply)
         db.session.commit()
     return render_template('view_submission.html', submission=submission)
+
+@app.context_processor
+def inject_forms():
+    if 'user_id' in session:
+        user_submissions = Submission.query.filter_by(username=session.get('username')).order_by(Submission.id.desc()).limit(5).all()
+        user_replies = Reply.query.filter_by(username=session.get('username')).order_by(Reply.id.desc()).limit(5).all()
+        replied_to_forms = [Submission.query.get(reply.submission_id) for reply in user_replies]
+        return dict(forms_you_own=user_submissions, replied_to_forms=replied_to_forms)
+    return dict(forms_you_own=[], replied_to_forms=[])
 
 if __name__ == '__main__':
     with app.app_context():

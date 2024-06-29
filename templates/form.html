@@ -5,9 +5,9 @@
 
 {% block content %}
     <form action="{{ url_for('create') }}" method="post">
-        <label for="title">Title:</label>
+        <label for="title">Title:</label><br>
         <input type="text" id="title" name="title" required><br>
-        <label for="content">Content:</label>
+        <label for="content">Content:</label><br>
         <textarea id="content" name="content" required></textarea><br>
         <input type="submit" value="Submit">
     </form>
