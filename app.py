@@ -1,14 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SESSION_TYPE'] = 'filesystem'  # Use server-side session storage
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+Session(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,7 +35,7 @@ class Reply(db.Model):
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
+        if not session.get('logged_in'):
             flash('Please log in to access this page.')
             return redirect(url_for('login'))
         return f(*args, **kwargs)
@@ -55,15 +58,14 @@ def login():
         elif not check_password_hash(user.password, password):
             flash("Login failed. Incorrect password.")
         else:
+            session['logged_in'] = True
             session['user_id'] = user.id
-            session['username'] = user.username
-            flash(f"Welcome back, {user.username}!")
-            return redirect(url_for('submissions'))  # Redirect to another page after successful login
+            flash(f"Welcome back!")
+            return redirect(url_for('submissions'))
 
-        return redirect(url_for('login'))  # Redirect to login page after failed login attempt
+        return redirect(url_for('login'))
 
     return render_template('login.html')
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -96,7 +98,6 @@ def create():
         is_anonymous = 'anonymous' in request.form
         user_id = session.get('user_id')
         
-        # Ensure user_id exists in session and is valid
         if user_id:
             user = User.query.get(user_id)
             if user:
@@ -119,7 +120,6 @@ def create():
 
     return render_template('form.html')
 
-
 @app.route('/submission/<int:submission_id>', methods=['GET', 'POST'])
 @login_required
 def view_submission(submission_id):
@@ -133,6 +133,12 @@ def view_submission(submission_id):
         db.session.commit()
         flash('Reply posted successfully.')
     return render_template('view_submission.html', submission=submission)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out.')
+    return redirect(url_for('login'))
 
 @app.context_processor
 def inject_forms():
