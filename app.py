@@ -72,13 +72,26 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+
+        # Check for duplicate username
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists. Please choose a different one.')
+            return redirect(url_for('register'))
+
+        # Check password strength
+        if len(password) < 8 or not any(char.isdigit() for char in password) or not any(char.isupper() for char in password):
+            flash('Password must be at least 8 characters long, include a number and an uppercase letter.')
+            return redirect(url_for('register'))
+
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
         flash('Registration successful. Please log in.')
         return redirect(url_for('login'))
+        
     return render_template('register.html')
+
 
 @app.route('/submissions')
 @login_required
