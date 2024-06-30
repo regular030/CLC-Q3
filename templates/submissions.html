@@ -2,11 +2,12 @@
 {% extends 'base.html' %}
 {% block title %}All Submissions{% endblock %}
 {% block content %}
-    <h1>All Submissions</h1>
+    <h1>All Forms</h1>
     {% for submission in submissions %}
         <div class="box">
             <a href="{{ url_for('view_submission', submission_id=submission.id) }}"><h2>{{ submission.title }}</h2></a>
             <p>{{ submission.content[:100] }}...</p>
+            <small>By: {{ 'Anonymous' if submission.is_anonymous else submission.username }}</small>
         </div>
     {% endfor %}
 {% endblock %}

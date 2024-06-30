@@ -1,3 +1,4 @@
+<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +9,88 @@
             font-size: 18px;
             background-color: #ffffff;
             color: #000000;
+            margin: 0;
+            padding: 0;
         }
         .dark-mode {
             background-color: #000000;
+            color: #f0f0f0;
+        }
+        .top-bar {
+            width: calc(100% - 200px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            position: fixed;
+            left: 200px;
+            top: 0;
+            z-index: 10;
+        }
+        .dark-mode .top-bar {
+            background-color: #333333;
+        }
+        .search-bar {
+            flex-grow: 1;
+            margin: 0 100px;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #cccccc;
+        }
+        .dark-mode .search-bar input {
+            background-color: #555555;
+            color: #f0f0f0;
+            border: 1px solid #888888;
+        }
+        .top-bar button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            color: #000000;
+            border: none;
+            margin-right: 20px;
+        }
+        .dark-mode .top-bar button {
+            background-color: #444444;
+            color: #f0f0f0;
+        }
+        .icon img {
+            width: 36px;
+            height: 36px;
+            border: none;
+            cursor: pointer;
+            margin-right: 30px;
+            margin-top: 4px;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            background-color: #f0f0f0;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            z-index: 10;
+            right: 0;
+            top: 40px;
+            width: 150px;
+            text-align: center;
+        }
+        .dark-mode .dropdown {
+            background-color: #333333;
+        }
+        .dropdown a {
+            color: #000000;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+        }
+        .dark-mode .dropdown a {
             color: #f0f0f0;
         }
         .sidebar {
@@ -21,50 +101,70 @@
             height: 100vh;
             padding: 20px;
             font-size: 20px;
+            background-color: #f0f0f0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 11;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            background-color: #f0f0f0;
+            align-items: center;
         }
-
         .dark-mode .sidebar {
-            background-color: #555555; /* Dark mode background */
-            color: #f0f0f0; /* Dark mode text color */
+            background-color: #555555;
+            color: #f0f0f0;
+        }
+        .sidebar img {
+            width: 400px;
+            margin-bottom: 10px;
         }
         .sidebar ul {
             list-style-type: none;
             padding: 0;
+            width: 100%;
         }
         .sidebar li {
-            margin: 0px 0;
+            margin-bottom: 15px;
         }
         .sidebar a {
             text-decoration: none;
             color: inherit;
-            font-size: 20px;
+            font-size: 18px;
         }
         .sidebar a:hover {
             text-decoration: underline;
             background-color: #999999;
         }
-        .sidebar .subsection > a:hover {
-        text-decoration: none;
-        background-color: transparent;
+        .dark-mode .sidebar a:hover {
+            background-color: #666666;
         }
         .sidebar .subsection > a {
-            text-decoration: none;
             cursor: default; 
         }
         .sidebar .subsection ul {
-            padding-left: 20px; /* Indent nested lists */
+            padding-left: 20px;
         }
         .sidebar .subsection ul li {
-            margin: 0px 0;
-            font-size: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .sidebar .divider {
+            border-bottom: 1px solid #cccccc;
+            margin: 10px 0;
+        }
+        .dark-mode .sidebar .divider {
+            border-bottom: 1px solid #888888;
         }
         .content {
-            margin-left: 220px; 
+            margin-left: 230px;
+            margin-top: 60px;
             padding: 20px;
+            width: calc(100% - 230px);
+            box-sizing: border-box;
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .dark-mode .content {
+            background-color: #111111;
+            color: #f0f0f0;
         }
         .box {
             border-radius: 15px;
@@ -72,11 +172,13 @@
             padding: 20px;
             margin-bottom: 20px;
             transition: background-color 0.3s;
+            background-color: #ffffff;
+            color: #000000;
         }
         .dark-mode .box {
-            background-color: #222; /* Dark mode background for boxes */
-            color: #f0f0f0; /* Dark mode text color */
-            border-color: #888; /* Dark mode border color */
+            background-color: #222222;
+            color: #f0f0f0;
+            border-color: #888888;
         }
         #settingsModal {
             display: none;
@@ -91,19 +193,43 @@
             padding-top: 60px;
         }
         .dark-mode #settingsModal {
-            background-color: rgba(0,0,0,0.8); /* Dark mode background for modal */
+            background-color: rgba(0,0,0,0.8);
         }
         .modal-content {
-            background-color: #fefefe;
+            background-color: #444444;
             margin: 5% auto;
             padding: 20px;
             border: 3px solid #888;
             width: 200px;
+            color: #f0f0f0;
         }
         .dark-mode .modal-content {
-            background-color: #444; /* Dark mode background for modal content */
-            color: #f0f0f0; /* Dark mode text color */
-            border-color: #888; /* Dark mode border color */
+            background-color: #000000;
+            color: #f0f0f0;
+            border-color: #888888;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.5);
+        }
+        input[type="submit"],
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
         }
     </style>
     <script>
@@ -111,6 +237,20 @@
             if (localStorage.getItem('darkMode') === 'enabled') {
                 document.body.classList.add('dark-mode');
             }
+
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                const boxes = document.querySelectorAll('.box');
+                boxes.forEach(box => {
+                    const title = box.querySelector('h2').innerText.toLowerCase();
+                    box.style.display = title.includes(query) ? 'block' : 'none';
+                });
+            });
+
+            document.querySelector('.icon img').addEventListener('click', function() {
+                const dropdown = document.getElementById('userDropdown');
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            });
         });
 
         function toggleDarkMode() {
@@ -123,6 +263,7 @@
                 localStorage.setItem('darkMode', 'disabled');
             }
         }
+
         function showModal() {
             var modal = document.getElementById("settingsModal");
             modal.style.display = "block";
@@ -137,27 +278,44 @@
 <body>
     {% if not request.path.endswith('/login') %}
     <div class="sidebar">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
         <ul>
-            <li><a href="{{ url_for('submissions') }}">All Submissions</a></li>
+            <li><a href="{{ url_for('submissions') }}">All Forms</a></li>
+            <div class="divider"></div>
             <li><a href="{{ url_for('create') }}">Create a New Form</a></li>
+            <div class="divider"></div>
             <li class="subsection">
-                <a href="#" class="subsection-header">Forms You Own</a>
+                <a href="#" class="subsection">Forms You Own:</a>
                 <ul>
                     {% for form in forms_you_own %}
                         <li><a href="{{ url_for('view_submission', submission_id=form.id) }}">{{ form.title }}</a></li>
                     {% endfor %}
                 </ul>
             </li>
+            <div class="divider"></div>
             <li class="subsection">
-                <a href="#" class="subsection-header">Replied to Forms</a>
+                <a href="#" class="subsection-header">Replied to Forms:</a>
                 <ul>
                     {% for form in replied_to_forms %}
                         <li><a href="{{ url_for('view_submission', submission_id=form.id) }}">{{ form.title }}</a></li>
                     {% endfor %}
                 </ul>
             </li>
+            <div class="divider"></div>
             <li><a href="#" onclick="showModal()">Settings</a></li>
         </ul>
+    </div>
+    <div class="top-bar">
+        <div class="search-bar">
+            <input id="searchInput" type="text" placeholder="Search...">
+        </div>
+        <a href="{{ url_for('create') }}"><button>Create Form</button></a>
+        <div class="icon">
+            <img src="{{ url_for('static', filename='user.jpg') }}" alt="User Icon">
+            <div class="dropdown" id="userDropdown">
+                <a href="#">{{ session['username'] }}</a>
+            </div>
+        </div>
     </div>
     {% endif %}
     <div id="settingsModal">
