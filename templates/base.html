@@ -248,9 +248,10 @@
             });
 
             document.querySelector('.icon img').addEventListener('click', function() {
-                const dropdown = document.getElementById('userDropdown');
-                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-            });
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
         });
 
         function toggleDarkMode() {
@@ -273,6 +274,15 @@
             var modal = document.getElementById("settingsModal");
             modal.style.display = "none";
         }
+        
+        function toggleDropdown() {
+        var dropdown = document.getElementById('userDropdown');
+        if (dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+        } else {
+            dropdown.style.display = 'block';
+        }
+    }
     </script>
 </head>
 <body>
@@ -313,7 +323,7 @@
         <div class="icon">
             <img src="{{ url_for('static', filename='user.jpg') }}" alt="User Icon">
             <div class="dropdown" id="userDropdown">
-                <a href="#">{{ session['username'] }}</a>
+                <a href="#" onclick="toggleDropdown()">{{ session['username'] }}</a>
             </div>
         </div>
     </div>

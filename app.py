@@ -55,17 +55,21 @@ def login():
 
         if not user:
             flash("Login failed. Username does not exist.")
+            return redirect(url_for('login'))  # Redirect to login page on failure
+
         elif not check_password_hash(user.password, password):
             flash("Login failed. Incorrect password.")
+            return redirect(url_for('login'))  # Redirect to login page on failure
+
         else:
             session['logged_in'] = True
             session['user_id'] = user.id
-            flash(f"Welcome back!")
-            return redirect(url_for('submissions'))
-
-        return redirect(url_for('login'))
+            session['username'] = user.username
+            flash(f"Welcome back, {user.username}!")
+            return redirect(url_for('submissions'))  # Redirect to submissions page on success
 
     return render_template('login.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
