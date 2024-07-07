@@ -1,0 +1,147 @@
+<!-- templates/index.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThoughtThread</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #77aaff 3px solid;
+            text-align: center;
+        }
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+        header ul {
+            padding: 0;
+            list-style: none;
+        }
+        header li {
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+        .showcase {
+            min-height: 400px;
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding-top: 100px;
+        }
+        .showcase h1 {
+            font-size: 55px;
+            margin-top: 0;
+            animation: fadeInDown 2s;
+        }
+        .showcase p {
+            font-size: 20px;
+            animation: fadeInUp 2s;
+        }
+        .content {
+            margin-top: 40px;
+        }
+        .content h2 {
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+        .content p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .content img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 20px;
+            color: white;
+            background: #333;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background: #77aaff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>ThoughtThread</h1>
+            <ul>
+                <li><a href="{{ url_for('login') }}" class="button">Login</a></li>
+            </ul>
+        </div>
+    </header>
+    <section class="showcase">
+        <div class="container">
+            <h1 class="animate__animated animate__fadeInDown">Welcome to ThoughtThread</h1>
+            <p class="animate__animated animate__fadeInUp">Your journey to better mental health starts here. We ensure your privacy and security every step of the way.</p>
+        </div>
+    </section>
+    <div class="container content">
+        <section class="animated-section">
+            <h2 class="animate__animated">Our Commitment to Mental Health</h2>
+            <p class="animate__animated">At ThoughtThread, we believe in the importance of mental well-being. Our platform offers resources, support, and a community dedicated to helping you achieve a healthier mind.</p>
+            <img src="{{ url_for('static', filename='mental_health.jpg') }}" alt="Mental Health Image" class="animate__animated">
+        </section>
+        <section class="animated-section">
+            <h2 class="animate__animated">Your Password Security</h2>
+            <p class="animate__animated">Security is our top priority. We use state-of-the-art encryption methods to ensure that your data and passwords are always protected.</p>
+            <img src="{{ url_for('static', filename='security.jpg') }}" alt="Security Image" class="animate__animated">
+        </section>
+        <section class="animated-section">
+            <h2 class="animate__animated">Join Our Community</h2>
+            <p class="animate__animated">Become a part of a supportive and understanding community. Share your experiences, find support, and grow together with ThoughtThread.</p>
+            <img src="{{ url_for('static', filename='community.jpg') }}" alt="Community Image" class="animate__animated">
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedSections = document.querySelectorAll('.animated-section');
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate__fadeInUp');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            animatedSections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

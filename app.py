@@ -1,3 +1,4 @@
+# app.py
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -13,6 +14,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 Session(app)
 
+# Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -32,6 +34,7 @@ class Reply(db.Model):
     content = db.Column(db.Text, nullable=False)
     submission = db.relationship('Submission', backref=db.backref('replies', lazy=True))
 
+# Helper Functions
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -41,10 +44,10 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Routes
 @app.route('/')
-@login_required
-def home():
-    return redirect(url_for('submissions'))
+def index():
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -55,21 +58,20 @@ def login():
 
         if not user:
             flash("Login failed. Username does not exist.")
-            return redirect(url_for('login'))  # Redirect to login page on failure
+            return redirect(url_for('login'))
 
         elif not check_password_hash(user.password, password):
             flash("Login failed. Incorrect password.")
-            return redirect(url_for('login'))  # Redirect to login page on failure
+            return redirect(url_for('login'))
 
         else:
             session['logged_in'] = True
             session['user_id'] = user.id
             session['username'] = user.username
             flash(f"Welcome back, {user.username}!")
-            return redirect(url_for('submissions'))  # Redirect to submissions page on success
+            return redirect(url_for('submissions'))
 
     return render_template('login.html')
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -77,12 +79,10 @@ def register():
         username = request.form['username']
         password = request.form['password']
 
-        # Check for duplicate username
         if User.query.filter_by(username=username).first():
             flash('Username already exists. Please choose a different one.')
             return redirect(url_for('register'))
 
-        # Check password strength
         if len(password) < 8 or not any(char.isdigit() for char in password) or not any(char.isupper() for char in password):
             flash('Password must be at least 8 characters long, include a number and an uppercase letter.')
             return redirect(url_for('register'))
@@ -95,7 +95,6 @@ def register():
         return redirect(url_for('login'))
         
     return render_template('register.html')
-
 
 @app.route('/submissions')
 @login_required
@@ -150,6 +149,10 @@ def view_submission(submission_id):
         db.session.commit()
         flash('Reply posted successfully.')
     return render_template('view_submission.html', submission=submission)
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 @app.route('/logout')
 def logout():
