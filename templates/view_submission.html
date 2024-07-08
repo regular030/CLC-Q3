@@ -1,24 +1,24 @@
-<!-- templates/view_submission.html -->
+<!-- view_submission.html -->
 {% extends 'base.html' %}
-
-{% block title %}Submission Details{% endblock %}
-
 {% block content %}
-    <div>
+    <div class="submission">
         <h2>{{ submission.title }}</h2>
         <p>{{ submission.content }}</p>
-        <p><small>By: {{ 'Anonymous' if submission.is_anonymous else submission.username }}</small></p>
-        <h3>Replies</h3>
+    </div>
+
+    <form action="{{ url_for('view_submission', submission_id=submission.id) }}" method="POST">
+        <textarea name="content" placeholder="Your reply"></textarea>
+        <button type="submit">Submit Reply</button>
+    </form>
+
+    <div class="replies">
+        <h3>Replies:</h3>
         {% for reply in submission.replies %}
-            <div>
-                <p><strong>{{ reply.username }}:</strong> {{ reply.content }}</p>
+            <div class="reply">
+                <p>{{ reply.username }}: {{ reply.content }}</p>
             </div>
         {% endfor %}
     </div>
-    <form action="{{ url_for('view_submission', submission_id=submission.id) }}" method="POST">
-        <textarea name="content" rows="4" cols="50"></textarea><br>
-        <input type="submit" value="Submit Reply">
-    </form>
     <br>
     <a href="{{ url_for('submissions') }}">Back to Submissions</a>
 {% endblock %}

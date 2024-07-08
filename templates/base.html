@@ -315,9 +315,9 @@
         <div class="icon">
             <img src="{{ url_for('static', filename='user.jpg') }}" alt="User Icon">
             <div class="dropdown" id="userDropdown">
-                <a href="#">{{ session['username'] }}</a>
+                <span>{{ session['username'] }}</span>
             </div>
-        </div>
+        </div>        
     </div>
     {% endif %}
     <div id="settingsModal">
