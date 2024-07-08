@@ -1,0 +1,8 @@
+# Ignore __pycache__ directories
+__pycache__/
+
+# Ignore flask_session directory
+flask_session/
+
+# Ignore instance directory
+instance/
