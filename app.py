@@ -27,7 +27,7 @@ class User(db.Model):
     role = db.Column(db.String(10), nullable=False, default='user')  # 'user' or 'admin'
     uid = db.Column(db.String(36), unique=True, nullable=False, default=str(uuid.uuid4()))
     banned = db.Column(db.Boolean, default=False)
-    ip_address = db.Column(db.String(64), unique=True)
+    ip_address = db.Column(db.String(64), unique=False)
 
     def ban_user(self):
         self.banned = True
@@ -89,6 +89,7 @@ def admin_required(f):
     return decorated_function
 
 @app.route('/admin', methods=['GET', 'POST'])
+@admin_required
 def admin_dashboard():
     if request.method == 'POST':
         uid = request.form.get('uid')
