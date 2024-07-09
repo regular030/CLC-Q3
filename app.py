@@ -88,12 +88,39 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@app.route('/admin')
-@admin_required
+@app.route('/admin', methods=['GET', 'POST'])
 def admin_dashboard():
-    page = request.args.get('page', 1, type=int)
-    users = User.query.paginate(page=page, per_page=10)
+    if request.method == 'POST':
+        uid = request.form.get('uid')
+        user = User.query.filter_by(uid=uid).first()
+
+        if user:
+            # Delete the user
+            db.session.delete(user)
+            db.session.commit()
+            flash(f'User {user.username} (UID: {user.uid}) has been deleted successfully.', 'success')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash(f'User with UID {uid} not found.', 'error')
+
+    # Fetch all users (example for displaying in the admin dashboard)
+    users = User.query.paginate(per_page=10)  # Example pagination for demonstration
+
     return render_template('admin_dashboard.html', users=users)
+
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    user_uid = request.form.get('user_uid')
+    user = User.query.filter_by(uid=user_uid).first()
+
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        flash(f'User {user.username} (UID: {user.uid}) has been deleted successfully.', 'success')
+    else:
+        flash(f'User with UID {user_uid} not found.', 'error')
+
+    return redirect(url_for('admin_dashboard'))
 
 # CLI Command for Admin
 @admin_cli.command('grant_admin')

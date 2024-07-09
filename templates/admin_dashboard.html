@@ -45,6 +45,10 @@
                         <input type="hidden" name="ip_address" value="{{ user.ip_address }}">
                         <button type="submit">Unban IP</button>
                     </form>
+                    <form action="{{ url_for('delete_user') }}" method="POST" style="display:inline;">
+                        <input type="hidden" name="user_uid" value="{{ user.uid }}">
+                        <button type="submit">Delete User</button>
+                    </form>
                 </li>
             {% endfor %}
         </ul>

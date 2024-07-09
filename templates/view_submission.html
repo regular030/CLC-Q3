@@ -1,24 +1,29 @@
-<!-- view_submission.html -->
 {% extends 'base.html' %}
 {% block content %}
-    <div class="submission">
-        <h2>{{ submission.title }}</h2>
-        <p>{{ submission.content }}</p>
+    <div class="box">
+        <div class="submission">
+            <h1>{{ submission.title }}</h1>
+            <p>{{ submission.content }}</p>
+        </div>
+    </div>
+
+    <div class="replies">
+        <h3>Replies:</h3>
+        {% if replies %}
+            {% for reply in replies %}
+                <div class="reply">
+                    <p>{{ reply.username }}: {{ reply.content }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No replies yet. Be the first to reply!</p>
+        {% endif %}
     </div>
 
     <form action="{{ url_for('view_submission', submission_id=submission.id) }}" method="POST">
         <textarea name="content" placeholder="Your reply"></textarea>
-        <button type="submit">Submit Reply</button>
+        <button type="submit">Reply</button>
     </form>
 
-    <div class="replies">
-        <h3>Replies:</h3>
-        {% for reply in submission.replies %}
-            <div class="reply">
-                <p>{{ reply.username }}: {{ reply.content }}</p>
-            </div>
-        {% endfor %}
-    </div>
     <br>
-    <a href="{{ url_for('submissions') }}">Back to Submissions</a>
 {% endblock %}
