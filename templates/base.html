@@ -62,12 +62,12 @@
             color: #f0f0f0;
         }
         .icon img {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border: none;
             cursor: pointer;
             margin-right: 30px;
-            margin-top: 4px;
+            margin-top: -10px;
         }
         .dropdown {
             display: none;
@@ -278,27 +278,52 @@
 <body>
     {% if not request.path.endswith('/login') %}
     <div class="sidebar">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" style="width: 250px; height: 250px; object-fit: cover;" alt="Logo">
         <ul>
             <li><a href="{{ url_for('submissions') }}">All Forms</a></li>
             <div class="divider"></div>
             <li><a href="{{ url_for('create') }}">Create a New Form</a></li>
             <div class="divider"></div>
             <li class="subsection">
-                <a href="#" class="subsection">Forms You Own:</a>
+                <a href="#" class="subsection-header">Forms You Own:</a>
                 <ul>
-                    {% for form in forms_you_own %}
-                        <li><a href="{{ url_for('view_submission', submission_id=form.id) }}">{{ form.title }}</a></li>
-                    {% endfor %}
+                    {% if forms_you_own %}
+                        {% for form in forms_you_own %}
+                            {% if form.id is defined %}
+                                <li>
+                                    <a href="{{ url_for('view_submission', submission_id=form.id) }}">
+                                        {{ form.title[:18] }}{% if form.title|length > 18 %}...{% endif %}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li>No forms owned.</li>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <li>No forms owned.</li>
+                    {% endif %}
                 </ul>
             </li>
-            <div class="divider"></div>
+            
+            <!-- Adjusted navigation link for forms you've replied to -->
             <li class="subsection">
                 <a href="#" class="subsection-header">Replied to Forms:</a>
                 <ul>
-                    {% for form in replied_to_forms %}
-                        <li><a href="{{ url_for('view_submission', submission_id=form.id) }}">{{ form.title }}</a></li>
-                    {% endfor %}
+                    {% if replied_to_forms %}
+                        {% for form in replied_to_forms %}
+                            {% if form.id is defined %}
+                                <li>
+                                    <a href="{{ url_for('view_submission', submission_id=form.id) }}">
+                                        {{ form.title[:18] }}{% if form.title|length > 18 %}...{% endif %}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li>No forms replied to.</li>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <li>No forms replied to.</li>
+                    {% endif %}
                 </ul>
             </li>
             <div class="divider"></div>
@@ -313,7 +338,6 @@
         <div class="search-bar">
             <input id="searchInput" type="text" placeholder="Search...">
         </div>
-        <a href="{{ url_for('create') }}"><button>Create Form</button></a>
         <div class="icon">
             <img src="{{ url_for('static', filename='user.jpg') }}" alt="User Icon">
             <div class="dropdown" id="userDropdown">

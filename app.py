@@ -74,8 +74,17 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not session.get('logged_in'):
-            flash('Please log in to access this page.')
+            flash('Please log in to access this page.', 'error')
             return redirect(url_for('login'))
+        
+        # Check if the logged-in user is banned
+        user_id = session.get('user_id')
+        if user_id:
+            user = User.query.filter_by(id=user_id).first()
+            if user and user.banned:
+                flash('Your account has been banned.', 'error')
+                return redirect(url_for('login'))
+
         return f(*args, **kwargs)
     return decorated_function
 
@@ -258,7 +267,13 @@ def submissions():
     all_submissions = Submission.query.order_by(Submission.id.desc()).all()
     user_submissions = Submission.query.filter_by(username=session.get('username')).order_by(Submission.id.desc()).limit(5).all()
     user_replies = Reply.query.filter_by(username=session.get('username')).order_by(Reply.id.desc()).limit(5).all()
-    replied_to_forms = [Submission.query.get(reply.submission_id) for reply in user_replies]
+    
+    # Filter out submissions with None IDs
+    all_submissions = [submission for submission in all_submissions if submission.id is not None]
+    
+    # Fetch actual submission objects for replied forms
+    replied_to_forms = [Submission.query.get(reply.submission_id) for reply in user_replies if reply.submission_id is not None]
+    
     return render_template('submissions.html', submissions=all_submissions, forms_you_own=user_submissions, replied_to_forms=replied_to_forms)
 
 @app.route('/create', methods=['GET', 'POST'])

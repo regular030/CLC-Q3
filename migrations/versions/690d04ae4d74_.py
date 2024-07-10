@@ -1,8 +1,8 @@
-"""Initial migration
+"""empty message
 
-Revision ID: 7f87291da7ea
+Revision ID: 690d04ae4d74
 Revises: 
-Create Date: 2024-07-08 15:14:20.067612
+Create Date: 2024-07-10 01:05:24.293511
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7f87291da7ea'
+revision = '690d04ae4d74'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -41,7 +41,6 @@ def upgrade():
     sa.Column('banned', sa.Boolean(), nullable=True),
     sa.Column('ip_address', sa.String(length=64), nullable=True),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('ip_address'),
     sa.UniqueConstraint('uid'),
     sa.UniqueConstraint('username')
     )
