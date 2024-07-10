@@ -1,4 +1,4 @@
-flask admin grant_admin af3d0346-0aa3-4b61-b7bf-fe91d307eed5
+flask admin grant_admin a4f7bc7d-f22d-4f67-81a8-014253c09dd3
 
 flask db init  # Initialize migrations (only run once)
 flask db migrate -m "Initial migration"  # Create a new migration

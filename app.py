@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_session import Session
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from flask.cli import AppGroup
@@ -22,12 +23,12 @@ app.cli.add_command(admin_cli)
 # Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
-    role = db.Column(db.String(10), nullable=False, default='user')  # 'user' or 'admin'
-    uid = db.Column(db.String(36), unique=True, nullable=False, default=str(uuid.uuid4()))
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+    role = db.Column(db.String(50), nullable=False)
+    uid = db.Column(db.String(150), unique=True, nullable=False)
     banned = db.Column(db.Boolean, default=False)
-    ip_address = db.Column(db.String(64), unique=False)
+    ip_address = db.Column(db.String(150), nullable=True)
 
     def ban_user(self):
         self.banned = True
@@ -243,21 +244,27 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        role = request.form.get('role', 'user')  # default to 'user' if role is not provided
 
-        if User.query.filter_by(username=username).first():
+        # Check if the username already exists
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
             flash('Username already exists. Please choose a different one.')
             return redirect(url_for('register'))
 
-        if len(password) < 8 or not any(char.isdigit() for char in password) or not any(char.isupper() for char in password):
-            flash('Password must be at least 8 characters long, include a number and an uppercase letter.')
-            return redirect(url_for('register'))
+        # If the username does not exist, proceed with the registration
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+        new_user = User(username=username, password=hashed_password, role=role, uid=str(uuid.uuid4()), banned=False)
 
-        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-        new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
-        db.session.commit()
-        flash('Registration successful. Please log in.')
-        return redirect(url_for('login'))
+        try:
+            db.session.commit()
+            flash('You have successfully registered! You can now log in.')
+            return redirect(url_for('login'))
+        except IntegrityError:
+            db.session.rollback()
+            flash('An error occurred during registration. Please try again.')
+            return redirect(url_for('register'))
 
     return render_template('register.html')
 
